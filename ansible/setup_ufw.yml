@@ -1,0 +1,59 @@
+- name: Setup Firewall
+  hosts: webservers
+  become: true
+
+  vars:
+    allowed_ports:
+      - { port: "22", proto: "tcp", comment: "SSH access" }
+      - { port: "80", proto: "tcp", comment: "HTTP access" }
+      # - { port: "443", proto: "tcp", comment: "HTTPS access" }
+
+  tasks:
+    - name: Ensure UFW is installed
+      ansible.builtin.apt:
+        name: ufw
+        state: present
+        update_cache: yes
+      when: ansible_os_family == 'Debian'
+
+    - name: Reset UFW to default settings
+      community.general.ufw:
+        state: reset
+      ignore_errors: yes
+
+    - name: Set logging
+      community.general.ufw:
+        logging: "on"
+
+    - name: Allow specified ports (whitelist)
+      community.general.ufw:
+        rule: allow
+        proto: "{{ item.proto }}"
+        port: "{{ item.port }}"
+        comment: "{{ item.comment }}"
+      loop: "{{ allowed_ports }}"
+      notify:
+        - Enable UFW
+
+    - name: Set default incoming policy
+      community.general.ufw:
+        direction: incoming
+        policy: deny
+      notify:
+        - Enable UFW
+
+    - name: Set default outcoing policy
+      community.general.ufw:
+        direction: outgoing
+        policy: allow
+      notify:
+        - Enable UFW
+
+    - name: Enable UFW
+      community.general.ufw:
+        state: enabled
+
+  handlers:
+    - name: Enable UFW
+      community.general.ufw:
+        state: enabled
