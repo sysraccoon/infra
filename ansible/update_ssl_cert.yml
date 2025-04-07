@@ -1,0 +1,31 @@
+- name: Run Certbot
+  hosts: webservers
+  become: yes
+
+  vars:
+    domain: "sysraccoon.xyz"
+    email: "sysraccoon@gmail.com"
+
+  tasks:
+    - name: Install Certbot
+      apt:
+        name:
+          - certbot
+          - python3-certbot-nginx
+        state: present
+        update_cache: yes
+      when: ansible_os_family == 'Debian'
+
+    - name: Obtain SSL certificate
+      command:
+        cmd: certbot --nginx --redirect --non-interactive --agree-tos --email {{ email }} -d {{ domain }}
+        creates: "/etc/letsencrypt/live/{{ domain }}/privkey.pem"
+
+    - name: Ensure renewal cron job exists
+      cron:
+        name: Certbot SSL renewal
+        minute: "0"
+        hour: "3"
+        job: "/usr/bin/certbot renew --quiet --post-hook 'systemctl reload nginx'"
+        user: root
+
