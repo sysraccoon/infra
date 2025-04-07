@@ -1,5 +1,5 @@
 - name: Setup nginx
-  hosts: webservers
+  hosts: all
   become: yes
   become_user: root
   remote_user: root
@@ -22,11 +22,6 @@
       service:
         name: nginx
         state: stopped
-
-    # - name: Remove default nginx configuration
-    #   file:
-    #     path: /etc/nginx/sites-enabled/default
-    #     state: absent
 
     - name: Configure main nginx.conf
       template:

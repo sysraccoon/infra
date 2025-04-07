@@ -1,12 +1,12 @@
 - name: Setup Firewall
-  hosts: webservers
+  hosts: all
   become: true
 
   vars:
     allowed_ports:
       - { port: "22", proto: "tcp", comment: "SSH access" }
       - { port: "80", proto: "tcp", comment: "HTTP access" }
-      # - { port: "443", proto: "tcp", comment: "HTTPS access" }
+      - { port: "443", proto: "tcp", comment: "HTTPS access" }
 
   tasks:
     - name: Ensure UFW is installed
