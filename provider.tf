@@ -26,7 +26,7 @@ provider "digitalocean" {
 }
 
 data "digitalocean_ssh_key" "terraform" {
-  name = "terraform"
+  name = "terraform-deploy"
 }
 
 resource "digitalocean_domain" "sysraccoon" {
@@ -68,7 +68,7 @@ resource "digitalocean_droplet" "www" {
     command = <<-EOT
       mkdir -p ${path.module}/.ssh
       ssh-keyscan -H ${digitalocean_droplet.www.ipv4_address} > ${path.module}/.ssh/known_hosts
-      ANSIBLE_SSH_ARGS='-o UserKnownHostsFile=${path.module}/.ssh/known_hosts' \
+      ANSIBLE_SSH_ARGS='-o UserKnownHostsFile=${path.module}/.ssh/known_hosts -o IdentitiesOnly=yes -i ${var.pvt_key}' \
       ./ansible/setup_server.sh root ${self.ipv4_address} ${var.pvt_key} ${var.pub_key}
     EOT
   }
