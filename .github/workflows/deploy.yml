@@ -36,11 +36,6 @@ jobs:
           TF_VAR_pvt_key: ~/.ssh/id_rsa
           TF_VAR_pub_key: ~/.ssh/id_rsa.pub
 
-      - name: Install Ansible
-        run: |
-          apt-get -y update
-          apt-get -y install ansible
-
       - name: Update SSL certificate
         run: |
           ansible-playbook \
