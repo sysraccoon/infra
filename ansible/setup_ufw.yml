@@ -13,13 +13,12 @@
       ansible.builtin.apt:
         name: ufw
         state: present
-        update_cache: yes
+        update_cache: true
       when: ansible_os_family == 'Debian'
 
     - name: Reset UFW to default settings
       community.general.ufw:
         state: reset
-      ignore_errors: yes
 
     - name: Set logging
       community.general.ufw:

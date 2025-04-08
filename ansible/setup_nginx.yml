@@ -1,6 +1,6 @@
 - name: Setup nginx
   hosts: all
-  become: yes
+  become: true
   become_user: root
   remote_user: root
 
@@ -9,43 +9,43 @@
     server_name: "default"
     web_root: "/var/www"
     repo_root: "/opt/startbootstrap-clean-blog"
-  
+
   tasks:
     - name: Install nginx
-      apt:
+      ansible.builtin.apt:
         name: nginx
-        state: latest
-        update_cache: yes
+        state: present
+        update_cache: true
       when: ansible_os_family == "Debian"
 
     - name: Stop Nginx (before config changes)
-      service:
+      ansible.builtin.service:
         name: nginx
         state: stopped
 
     - name: Configure main nginx.conf
-      template:
+      ansible.builtin.template:
         src: templates/nginx.conf.j2
         dest: /etc/nginx/nginx.conf
         owner: root
         group: root
-        mode: 0644
+        mode: "0644"
       notify: Restart Nginx
 
     - name: Configure site
-      template:
+      ansible.builtin.template:
         src: templates/site.conf.j2
         dest: "/etc/nginx/sites-available/{{ server_name }}.conf"
         owner: root
         group: root
-        mode: 0644
+        mode: "0644"
       notify: Restart Nginx
 
     - name: Install git
-      apt:
+      ansible.builtin.apt:
         name: git
-        state: latest
-        update_cache: yes
+        state: present
+        update_cache: true
       when: ansible_os_family == "Debian"
 
     - name: Clone repository
@@ -53,24 +53,24 @@
         repo: https://github.com/StartBootstrap/startbootstrap-clean-blog.git
         dest: "{{ repo_root }}"
         version: "master"
-        clone: yes
-        update: yes
+        clone: true
+        update: true
 
     - name: Create web root directory
-      file:
+      ansible.builtin.file:
         path: "{{ web_root }}"
         state: directory
         owner: "{{ nginx_user }}"
         group: "{{ nginx_user }}"
-        mode: 0755
+        mode: "0755"
 
     - name: Remove default nginx configuration
-      file:
+      ansible.builtin.file:
         path: "{{ web_root }}/html"
         state: absent
 
     - name: Link site
-      file:
+      ansible.builtin.file:
         src: "{{ repo_root }}/dist"
         dest: "{{ web_root }}/html"
         state: link
@@ -78,14 +78,13 @@
       notify: Restart Nginx
 
     - name: Start and enable Nginx
-      service:
+      ansible.builtin.service:
         name: nginx
         state: started
-        enabled: yes
+        enabled: true
 
   handlers:
     - name: Restart Nginx
-      service:
+      ansible.builtin.service:
         name: nginx
         state: restarted
-

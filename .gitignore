@@ -38,6 +38,7 @@ terraform.rc
 
 # Anible
 *.retry
+.ansible/
 
 # Environment variables
 .env
