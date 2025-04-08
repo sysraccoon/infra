@@ -1,4 +1,16 @@
 terraform {
+  backend "s3" {
+    endpoints                   = { s3 = "https://nyc3.digitaloceanspaces.com" }
+    region                      = "us-east-1"
+    bucket                      = "leetops-terraform-study"
+    key                         = "terraform.tfstate"
+    skip_credentials_validation = true
+    skip_metadata_api_check     = true
+    skip_requesting_account_id  = true
+    skip_s3_checksum            = true
+    encrypt                     = true
+  }
+
   required_providers {
     digitalocean = {
       source  = "digitalocean/digitalocean"
