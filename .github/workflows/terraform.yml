@@ -3,9 +3,13 @@ on: [push, pull_request]
 jobs:
   validate:
     runs-on: ubuntu-latest
+    environment: Terraform Deploy
     steps:
       - uses: actions/checkout@v4
       - uses: hashicorp/setup-terraform@v3
       - run: terraform fmt -check
       - run: terraform init
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.DO_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.DO_SECRET_ACCESS_KEY }}
       - run: terraform validate
