@@ -39,7 +39,7 @@ jobs:
       - name: Install Ansible
         run: |
           apt -y update
-          apd -y install ansible
+          apt -y install ansible
 
       - name: Update SSL certificate
         run: |
