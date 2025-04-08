@@ -38,8 +38,8 @@ jobs:
 
       - name: Update SSL certificate
         run: |
+          ANSIBLE_SSH_ARGS='-o UserKnownHostsFile=.ssh/known_hosts -o IdentitiesOnly=yes -i ~/.ssh/id_rsa' \
           ansible-playbook \
             -i ansible/inventory.yml \
-            --private-key=~/.ssh/id_rsa \
             -u root \
             ansible/update_ssl_cert.yml
