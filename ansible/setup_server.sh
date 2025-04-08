@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/usr/bin/env bash
 
 set -eu
 
@@ -7,7 +7,7 @@ address=$2
 private_key=$3
 public_key=$4
 
-SCRIPT_DIR=$(dirname $0)
+SCRIPT_DIR=$(dirname "$0")
 
 playbooks=("setup_nginx.yml" "setup_ufw.yml")
 for playbook in "${playbooks[@]}"; do
