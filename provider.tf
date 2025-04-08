@@ -25,7 +25,7 @@ provider "digitalocean" {
   token = var.do_token
 }
 
-data "digitalocean_ssh_key" "terraform" {
+data "digitalocean_ssh_key" "terraform-deploy" {
   name = "terraform-deploy"
 }
 
@@ -47,7 +47,7 @@ resource "digitalocean_droplet" "www" {
   region = "nyc3"
   size   = "s-1vcpu-1gb"
   ssh_keys = [
-    data.digitalocean_ssh_key.terraform.id
+    data.digitalocean_ssh_key.terraform-deploy.id
   ]
 
   provisioner "remote-exec" {

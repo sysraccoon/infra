@@ -9,14 +9,13 @@ public_key=$4
 
 SCRIPT_DIR=$(dirname $0)
 
-function perform_ansible_playbook {
+playbooks=("setup_nginx.yml" "setup_ufw.yml")
+for playbook in "${playbooks[@]}"; do
   ANSIBLE_HOST_KEY_CHECKING=False ansible-playbook \
     --user "${user}" \
     --inventory "${address}," \
     --private-key "${private_key}" \
     --e "pub_key=${public_key}" \
-    "${SCRIPT_DIR}/$1"
-}
+    "${SCRIPT_DIR}/${playbook}"
+done
 
-perform_ansible_playbook setup_nginx.yml
-perform_ansible_playbook setup_ufw.yml
