@@ -36,11 +36,27 @@ jobs:
           TF_VAR_pvt_key: ~/.ssh/id_rsa
           TF_VAR_pub_key: ~/.ssh/id_rsa.pub
 
-      - name: Update SSL certificate
+      - name: Add server to known hosts
         run: |
           ssh-keyscan -H www.sysraccoon.xyz >> ~/.ssh/known_hosts
+
+      - name: Setup Firewall
+        run: |
           ansible-playbook \
             -i ansible/inventory.yml \
-            --private-key ~/.ssh/id_rsa \
+            -u root \
+            ansible/setup_ufw.yml
+
+      - name: Update SSL Certificate
+        run: |
+          ansible-playbook \
+            -i ansible/inventory.yml \
             -u root \
             ansible/update_ssl_cert.yml
+
+      - name: Deploy Docker
+        run: |
+          ansible-playbook \
+            -i ansible/inventory.yml \
+            -u root \
+            ansible/setup_docker.yml

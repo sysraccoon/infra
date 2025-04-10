@@ -34,20 +34,20 @@
       notify:
         - Enable UFW
 
-    - name: Set default incoming policy
-      community.general.ufw:
-        direction: incoming
-        policy: deny
-      notify:
-        - Enable UFW
-
-    - name: Set default outcoing policy
-      community.general.ufw:
-        direction: outgoing
-        policy: allow
-      notify:
-        - Enable UFW
-
+    # - name: Set default incoming policy
+    #   community.general.ufw:
+    #     direction: incoming
+    #     policy: deny
+    #   notify:
+    #     - Enable UFW
+    #
+    # - name: Set default outcoing policy
+    #   community.general.ufw:
+    #     direction: outgoing
+    #     policy: allow
+    #   notify:
+    #     - Enable UFW
+    #
     - name: Enable UFW
       community.general.ufw:
         state: enabled

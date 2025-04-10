@@ -1,0 +1,12 @@
+services:
+  nginx:
+    image: nginx:stable
+    ports:
+      - 80:80
+      - 443:443
+    volumes:
+      - ./site/dist/:/var/www/html
+      - ./nginx:/etc/nginx/conf.d
+      - /etc/letsencrypt/:/etc/letsencrypt
+    extra_hosts:
+      - "host.docker.internal:host-gateway"

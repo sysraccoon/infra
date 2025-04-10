@@ -1,0 +1,55 @@
+- name: Setup nginx
+  hosts: all
+  become: true
+
+  vars:
+    dest_project_directory: /opt/infra
+
+  tasks:
+    - name: Install Docker and Docker Compose
+      ansible.builtin.apt:
+        pkg:
+          - docker.io
+          - docker-compose-v2
+        state: present
+        update_cache: true
+
+    - name: Create project directory
+      ansible.builtin.file:
+        path: "{{ dest_project_directory }}"
+        state: directory
+        owner: root
+        group: root
+        mode: "0755"
+
+    - name: Copy compose.yml
+      ansible.builtin.copy:
+        src: ../compose.yml
+        dest: "{{ dest_project_directory }}/compose.yml"
+        mode: "0644"
+
+    - name: Create site directory
+      ansible.builtin.file:
+        path: "{{ dest_project_directory }}/site"
+        state: directory
+        owner: root
+        group: root
+        mode: "0755"
+
+    - name: Synchornize site
+      ansible.posix.synchronize:
+        src: ../site/dist/
+        dest: "{{ dest_project_directory }}/site/dist/"
+        checksum: true
+
+    - name: Synchornize nginx
+      ansible.posix.synchronize:
+        src: ../nginx/
+        dest: "{{ dest_project_directory }}/nginx/"
+        checksum: true
+
+    - name: Run docker compose up
+      community.docker.docker_compose_v2:
+        project_src: "{{ dest_project_directory }}"
+        build: "always"
+        state: "restarted"

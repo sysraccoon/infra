@@ -11,14 +11,14 @@
       ansible.builtin.apt:
         name:
           - certbot
-          - python3-certbot-nginx
+          # - python3-certbot-nginx
         state: present
         update_cache: true
       when: ansible_os_family == 'Debian'
 
     - name: Obtain SSL certificate
       ansible.builtin.command:
-        cmd: certbot --nginx --redirect --non-interactive --agree-tos --email {{ email }} -d {{ domain }}
+        cmd: certbot certonly --standalone --non-interactive --agree-tos --email {{ email }} -d {{ domain }} --http-01-port 7800
         creates: "/etc/letsencrypt/live/{{ domain }}/privkey.pem"
 
     - name: Ensure renewal cron job exists
@@ -26,5 +26,5 @@
         name: Certbot SSL renewal
         minute: "0"
         hour: "3"
-        job: "/usr/bin/certbot renew --quiet --post-hook 'systemctl reload nginx'"
+        job: "/usr/bin/certbot renew --quiet"
         user: root
